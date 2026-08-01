@@ -1,0 +1,17 @@
+{
+  "name": "Rediet Sharew | Full-Stack Developer",
+  "short_name": "Rediet",
+  "description": "Personal portfolio of Rediet Sharew - Full-Stack Developer & Software Engineering Student",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
