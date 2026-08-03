@@ -1,51 +1,75 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Award, X, ZoomIn } from 'lucide-react'
+import { Award, X, ZoomIn, Calendar, Building2, User } from 'lucide-react'
 import { certifications } from '../../data'
 import SectionHeading from '../ui/SectionHeading'
 
+/* ── Full-screen modal ── */
 function CertModal({ cert, onClose }) {
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      onClick={onClose}
-    >
-      <div className="absolute inset-0"
-        style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)' }} />
+    <AnimatePresence>
       <motion.div
-        className="relative w-full max-w-xl"
-        initial={{ scale: 0.88, y: 20 }} animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.88, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-        onClick={e => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
       >
-        <button
-          onClick={onClose}
-          className="absolute -top-10 right-0 text-white/50 hover:text-white transition-colors flex items-center gap-1.5 text-sm"
-        >
-          <X size={16} /> Close
-        </button>
-        <img
-          src={cert.logo}
-          alt={cert.title}
-          className="w-full rounded-2xl object-contain"
-          style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.8)', maxHeight: '80vh' }}
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(16px)' }}
         />
-        <div className="mt-4 text-center">
-          <p className="font-bold text-white">{cert.title}</p>
-          <p style={{ color: '#888', fontSize: 13 }}>{cert.issuer} · {cert.date}</p>
-        </div>
+
+        {/* Modal content */}
+        <motion.div
+          className="relative w-full max-w-3xl"
+          initial={{ scale: 0.9, y: 24, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+          onClick={e => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute -top-12 right-0 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm font-medium"
+          >
+            <X size={16} /> Close
+          </button>
+
+          {/* Certificate image — full, no crop */}
+          <div
+            className="w-full rounded-2xl overflow-hidden"
+            style={{
+              background: '#111',
+              border: '1px solid rgba(255,138,61,0.2)',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.9), 0 0 60px rgba(255,138,61,0.08)',
+            }}
+          >
+            <img
+              src={cert.logo}
+              alt={cert.title}
+              className="w-full h-auto block"
+              style={{ maxHeight: '75vh', objectFit: 'contain' }}
+            />
+          </div>
+
+          {/* Caption */}
+          <div className="mt-4 text-center">
+            <p className="font-bold text-white" style={{ fontSize: 16 }}>{cert.title}</p>
+            <p style={{ color: '#888', fontSize: 13, marginTop: 4 }}>{cert.issuer} · {cert.date}</p>
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   )
 }
 
+/* ── Main section ── */
 export default function Certifications() {
   const [modalCert, setModalCert] = useState(null)
-
   const awards = certifications.filter(c => c.isAward)
-  const certs  = certifications.filter(c => !c.isAward)
 
   return (
     <section id="certifications" className="section" style={{ background: '#0C0C0C' }}>
@@ -57,157 +81,137 @@ export default function Certifications() {
           subtitle="Hackathon achievements and verified technical certifications."
         />
 
-        {/* ── Featured Award — HACK-X ── */}
-        {awards.map((cert, i) => (
-          <motion.div
-            key={cert.title}
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="mb-10"
-          >
-            <div
-              className="card rounded-3xl overflow-hidden relative"
-              style={{ border: '1px solid rgba(255,138,61,0.25)', boxShadow: '0 0 40px rgba(255,138,61,0.08)' }}
+        <div className="flex flex-col items-center gap-8">
+          {awards.map((cert, i) => (
+            <motion.div
+              key={cert.title}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="w-full max-w-3xl"
             >
-              {/* Top glow */}
-              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-3xl"
-                style={{ background: 'linear-gradient(90deg, #FF8A3D, #F57625, #FF8A3D)' }} />
-
-              <div className="grid md:grid-cols-2 gap-0">
-                {/* Certificate image */}
+              <div
+                className="rounded-3xl overflow-hidden relative"
+                style={{
+                  background: '#111',
+                  border: '1px solid rgba(255,138,61,0.2)',
+                  boxShadow: '0 8px 48px rgba(0,0,0,0.6), 0 0 40px rgba(255,138,61,0.05)',
+                }}
+              >
+                {/* Top accent line */}
                 <div
-                  className="relative overflow-hidden group cursor-pointer"
-                  style={{ minHeight: 280 }}
+                  className="h-[3px] w-full"
+                  style={{ background: 'linear-gradient(90deg, transparent, #FF8A3D, #F57625, #FF8A3D, transparent)' }}
+                />
+
+                {/* ── Certificate photo — contained, max height limited ── */}
+                <div
+                  className="relative group cursor-pointer w-full flex items-center justify-center"
                   onClick={() => setModalCert(cert)}
+                  style={{ background: '#0a0a0a', padding: '28px 32px', lineHeight: 0 }}
                 >
                   <img
                     src={cert.logo}
                     alt={cert.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    style={{ minHeight: 280 }}
-                    onError={e => {
-                      e.target.style.display = 'none'
-                      e.target.nextSibling.style.display = 'flex'
+                    style={{
+                      width: '100%',
+                      maxWidth: 520,
+                      maxHeight: 340,
+                      objectFit: 'contain',
+                      display: 'block',
+                      borderRadius: 12,
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
                     }}
                   />
-                  {/* Fallback */}
-                  <div style={{ display: 'none' }}
-                    className="w-full h-full items-center justify-center flex-col gap-4 bg-gradient-to-br from-orange-950 to-orange-900"
-                    style2={{ minHeight: 280 }}>
-                    <Award size={48} className="text-orange-500" />
-                    <p className="text-orange-400 font-semibold">HACK-X 2026</p>
-                  </div>
-                  {/* Zoom overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="flex items-center gap-2 text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-xl">
-                      <ZoomIn size={16} /> View Certificate
+
+                  {/* Hover zoom overlay */}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                    style={{ background: 'rgba(0,0,0,0.45)' }}
+                  >
+                    <div
+                      className="flex items-center gap-2.5 px-5 py-3 rounded-2xl font-semibold text-white text-sm"
+                      style={{ background: 'rgba(255,138,61,0.9)', backdropFilter: 'blur(8px)' }}
+                    >
+                      <ZoomIn size={16} /> View Full Certificate
                     </div>
                   </div>
                 </div>
 
-                {/* Info */}
-                <div className="p-8 flex flex-col justify-center">
-                  {/* Award badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 w-fit"
-                    style={{ background: 'rgba(255,138,61,0.12)', border: '1px solid rgba(255,138,61,0.3)' }}>
-                    <Award size={14} style={{ color: '#FF8A3D' }} />
-                    <span style={{ color: '#FF8A3D', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                      Hackathon Award
-                    </span>
+                {/* ── Details row below image ── */}
+                <div className="p-6 md:p-8">
+                  {/* Badge + title row */}
+                  <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+                    <div>
+                      <div
+                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3"
+                        style={{
+                          background: 'rgba(255,138,61,0.1)',
+                          border: '1px solid rgba(255,138,61,0.25)',
+                        }}
+                      >
+                        <Award size={13} style={{ color: '#FF8A3D' }} />
+                        <span style={{ color: '#FF8A3D', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                          Hackathon Award
+                        </span>
+                      </div>
+                      <h3 className="font-black text-white" style={{ fontSize: 22, lineHeight: 1.2 }}>
+                        HACK-X 2026
+                      </h3>
+                      <p style={{ color: '#FF8A3D', fontSize: 14, marginTop: 2 }}>
+                        Hackathon Certificate
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setModalCert(cert)}
+                      className="btn-primary text-sm py-2.5 px-5 flex-shrink-0"
+                    >
+                      <ZoomIn size={14} /> View Certificate
+                    </button>
                   </div>
 
-                  <h3 className="font-black text-white mb-2" style={{ fontSize: 28, lineHeight: 1.1 }}>
-                    HACK-X 2026
-                  </h3>
-                  <p className="font-semibold mb-1" style={{ color: '#FF8A3D', fontSize: 15 }}>
-                    Hackathon Certificate
-                  </p>
-                  <p style={{ color: '#555', fontSize: 13, marginBottom: 20 }}>
-                    {cert.issuer}
-                  </p>
-
-                  <p style={{ color: '#666', fontSize: 14, lineHeight: 1.7, marginBottom: 24 }}>
-                    {cert.description}
-                  </p>
-
-                  <div className="space-y-2.5">
+                  {/* Meta details */}
+                  <div
+                    className="grid sm:grid-cols-2 gap-3 pt-5"
+                    style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+                  >
                     {[
-                      { label: 'Issued By',  value: 'Dr. Seblewongel Esseynew' },
-                      { label: 'Role',       value: 'Dean, College of Computing' },
-                      { label: 'Club',       value: 'Tech Tonic — Yeabsira Behailu' },
-                      { label: 'Date',       value: '15 May 2026' },
-                      { label: 'University', value: 'Debre Berhan University' },
-                    ].map(({ label, value }) => (
+                      { icon: User,      label: 'Issued By',  value: 'Dr. Seblewongel Esseynew'  },
+                      { icon: Building2, label: 'Department', value: 'College of Computing, DBU' },
+                      { icon: Award,     label: 'Organizer',  value: 'Tech Tonic Club'            },
+                      { icon: Calendar,  label: 'Date',       value: '15 May 2026'               },
+                    ].map(({ icon: Icon, label, value }) => (
                       <div key={label} className="flex items-center gap-3">
-                        <span style={{ color: '#444', fontSize: 12, width: 80, flexShrink: 0 }}>{label}</span>
-                        <span style={{ color: '#aaa', fontSize: 13 }}>{value}</span>
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ background: 'rgba(255,138,61,0.08)', border: '1px solid rgba(255,138,61,0.15)' }}
+                        >
+                          <Icon size={14} style={{ color: '#FF8A3D' }} />
+                        </div>
+                        <div>
+                          <p style={{ color: '#444', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</p>
+                          <p style={{ color: '#ccc', fontSize: 13, fontWeight: 500 }}>{value}</p>
+                        </div>
                       </div>
                     ))}
                   </div>
-
-                  <button
-                    onClick={() => setModalCert(cert)}
-                    className="btn-primary mt-6 text-sm py-2.5 px-5 w-fit"
-                  >
-                    <ZoomIn size={14} /> View Certificate
-                  </button>
                 </div>
+
+                {/* Bottom accent line */}
+                <div
+                  className="h-[2px] w-full"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,138,61,0.3), transparent)' }}
+                />
               </div>
-            </div>
-          </motion.div>
-        ))}
-
-        {/* ── Regular certifications ── */}
-        <div className="grid sm:grid-cols-3 gap-4">
-          {certs.map((cert, i) => (
-            <motion.div
-              key={cert.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -4 }}
-              className="card rounded-2xl p-5"
-            >
-              {/* Icon */}
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-2xl text-orange-500"
-                style={{ background: `${cert.color}15`, border: `1px solid ${cert.color}20` }}
-              >
-                <Award size={22} style={{ color: '#FF8A3D' }} />
-              </div>
-
-              <h3 className="font-semibold text-white mb-1 leading-snug" style={{ fontSize: 14 }}>
-                {cert.title}
-              </h3>
-              <p style={{ color: '#FF8A3D', fontSize: 12, marginBottom: 4 }}>{cert.issuer}</p>
-              <p style={{ color: '#444', fontSize: 11, fontFamily: 'monospace', marginBottom: 12 }}>
-                {cert.date}
-              </p>
-              <p style={{ color: '#555', fontSize: 12, lineHeight: 1.6, marginBottom: 14 }}>
-                {cert.description}
-              </p>
-
-              <a
-                href={cert.credentialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
-                style={{ color: '#FF8A3D' }}
-              >
-                <ExternalLink size={11} /> Verify Credential
-              </a>
             </motion.div>
           ))}
         </div>
       </div>
 
       {/* Modal */}
-      <AnimatePresence>
-        {modalCert && <CertModal cert={modalCert} onClose={() => setModalCert(null)} />}
-      </AnimatePresence>
+      {modalCert && <CertModal cert={modalCert} onClose={() => setModalCert(null)} />}
     </section>
   )
 }

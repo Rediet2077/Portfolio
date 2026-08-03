@@ -6,6 +6,14 @@ import toast from 'react-hot-toast'
 import { personalInfo } from '../../data'
 import SectionHeading from '../ui/SectionHeading'
 
+// ─── Web3Forms — free, no backend needed ─────────────────────────────────────
+// Get your free access key in 30 seconds:
+// 1. Go to https://web3forms.com
+// 2. Enter redietsharew231@gmail.com and click "Create Access Key"
+// 3. Check your email for the key and paste it below
+const WEB3FORMS_ACCESS_KEY = '4ce68aa7-61cf-4af2-b9ee-a33fcbb1a05b'
+// ─────────────────────────────────────────────────────────────────────────────
+
 const contactItems = [
   { icon: Mail,       label: 'Email',    value: 'redietsharew231@gmail.com',     href: 'mailto:redietsharew231@gmail.com',     color: '#FF8A3D' },
   { icon: FaGithub,   label: 'GitHub',   value: 'github.com/Rediet2077',         href: 'https://github.com/Rediet2077',         color: '#aaa'    },
@@ -31,31 +39,29 @@ export default function Contact() {
     if (!form.name || !form.email || !form.message) { toast.error('Please fill required fields.'); return }
     setSending(true)
     try {
-      const res = await fetch('https://formsubmit.co/ajax/redietsharew231@gmail.com', {
+      const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          _subject: form.subject || `New message from ${form.name} via Portfolio`,
-          message: form.message,
-          _replyto: form.email
-        })
+          access_key:   WEB3FORMS_ACCESS_KEY,
+          name:         form.name,
+          email:        form.email,
+          subject:      form.subject || `New message from ${form.name} via Portfolio`,
+          message:      form.message,
+          from_name:    'Portfolio Contact Form',
+          replyto:      form.email,
+        }),
       })
-      const data = await res.json().catch(() => ({}))
-      if (res.ok || data.success === 'true' || data.success === true) {
-        toast.success("Message sent! Delivered directly to Rediet's inbox.")
+      const data = await res.json()
+      if (data.success) {
+        toast.success("Message sent! I'll get back to you within 24 hours.")
         setForm({ name: '', email: '', subject: '', message: '' })
       } else {
-        window.location.href = `mailto:redietsharew231@gmail.com?subject=${encodeURIComponent(form.subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${form.name} (${form.email})\n\nMessage:\n${form.message}`)}`
-        toast.success("Opening your email application to deliver message!")
+        throw new Error(data.message || 'Submission failed')
       }
     } catch (err) {
-      window.location.href = `mailto:redietsharew231@gmail.com?subject=${encodeURIComponent(form.subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(`From: ${form.name} (${form.email})\n\nMessage:\n${form.message}`)}`
-      toast.success("Opening your email application to deliver message!")
+      console.error('Web3Forms error:', err)
+      toast.error('Failed to send. Please email me directly at redietsharew231@gmail.com')
     } finally {
       setSending(false)
     }
