@@ -35,7 +35,7 @@ export default function About() {
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0"
                   style={{ border: '2px solid rgba(255,138,61,0.25)' }}>
-                  <img src="/profile.jpg" alt="Rediet Sharew"
+                  <img src="/profile.png" alt="Rediet Sharew"
                     className="w-full h-full object-cover object-top"
                     onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex' }} />
                   <div style={{ display:'none' }} className="w-full h-full items-center justify-center font-bold text-orange-500 bg-neutral-900 text-lg">RS</div>
