@@ -224,7 +224,7 @@ export default function Hero() {
                 }}
               >
                 <img
-                  src="/profile.jpg"
+                  src="/profile.png"
                   alt="Rediet Sharew"
                   className="w-full h-full object-cover object-top"
                   style={{ filter: 'brightness(0.92) contrast(1.05)' }}
